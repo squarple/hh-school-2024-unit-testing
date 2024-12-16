@@ -3,7 +3,7 @@ package ru.hh.school.unittesting.homework;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -49,6 +49,8 @@ class LibraryManagerTest {
 
     int availableCopies = libraryManager.getAvailableCopies("War and Peace");
     assertEquals(4, availableCopies);
+
+    verify(notificationService, times(1)).notifyUser("Ivan Ivanov", "You have borrowed the book: War and Peace");
   }
 
   @Test
@@ -61,6 +63,8 @@ class LibraryManagerTest {
 
     int availableCopies = libraryManager.getAvailableCopies("War and Peace");
     assertEquals(5, availableCopies);
+
+    verify(notificationService, times(1)).notifyUser("Ivan Ivanov", "Your account is not active.");
   }
 
   @Test
@@ -74,6 +78,8 @@ class LibraryManagerTest {
 
     int availableCopies = libraryManager.getAvailableCopies("War and Peace");
     assertEquals(0, availableCopies);
+
+    verify(notificationService, times(0)).notifyUser(any(), any());
   }
 
   @Test
@@ -88,6 +94,8 @@ class LibraryManagerTest {
 
     boolean isReturn = libraryManager.returnBook("Anna Karenina", "Ivan Ivanov");
     assertFalse(isReturn);
+
+    verify(notificationService, times(0)).notifyUser(any(), any());
   }
 
   @Test
@@ -100,6 +108,9 @@ class LibraryManagerTest {
 
     boolean isReturn = libraryManager.returnBook("War and Peace", "John Doe");
     assertFalse(isReturn);
+
+    verify(notificationService, times(1)).notifyUser("Ivan Ivanov", "You have borrowed the book: War and Peace");
+    verifyNoMoreInteractions(notificationService);
   }
 
   @Test
@@ -112,6 +123,8 @@ class LibraryManagerTest {
 
     boolean isReturn = libraryManager.returnBook("War and Peace", "Ivan Ivanov");
     assertTrue(isReturn);
+
+    verify(notificationService, times(1)).notifyUser("Ivan Ivanov", "You have returned the book: War and Peace");
   }
 
   @Test
